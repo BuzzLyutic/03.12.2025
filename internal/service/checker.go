@@ -60,7 +60,7 @@ func (c *Checker) CheckLinks(ctx context.Context, links []string) map[string]str
 }
 
 func (c *Checker) isAvailable(ctx context.Context, link string) bool {
-	// Добавляем схему если отсутствует
+	// Добавление схемы если отсутствует
 	url := link
 	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
 		url = "https://" + url
@@ -75,7 +75,7 @@ func (c *Checker) isAvailable(ctx context.Context, link string) bool {
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		// Пробуем GET если HEAD не работает
+		// Запрос с методом GET если HEAD не работает
 		req, _ = http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 		req.Header.Set("User-Agent", "LinkChecker/1.0")
 		resp, err = c.client.Do(req)
@@ -85,6 +85,6 @@ func (c *Checker) isAvailable(ctx context.Context, link string) bool {
 	}
 	defer resp.Body.Close()
 
-	// Считаем доступным если статус < 400
+	// Считается доступным если статус < 400
 	return resp.StatusCode < 400
 }

@@ -48,23 +48,23 @@ func (h *Handler) CheckLinks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Проверяем не в процессе ли shutdown
+	// Проверка не в процессе ли shutdown
 	h.mu.RLock()
 	isShutdown := h.shutdown
 	h.mu.RUnlock()
 
-	// Получаем ID заранее для возможного сохранения
+	// Получение ID заранее для возможного сохранения
 	id := h.storage.NextID()
 
 	if isShutdown {
-		// Сохраняем задачу как pending и возвращаем
+		// Сохранение задачи как pending и возврат
 		h.storage.AddPendingTask(model.PendingTask{
 			ID:    id,
 			Links: req.Links,
 		})
 		h.storage.Save()
 
-		// Возвращаем ответ что задача принята
+		// Возвращение ответа что задача принята
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(map[string]interface{}{
@@ -74,24 +74,24 @@ func (h *Handler) CheckLinks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Увеличиваем счётчик активных задач
+	// Увеличение счётчика активных задач
 	h.activeJobs.Add(1)
 	defer h.activeJobs.Done()
 
-	// Добавляем как pending на случай crash
+	// Добавление как pending на случай crash
 	h.storage.AddPendingTask(model.PendingTask{
 		ID:    id,
 		Links: req.Links,
 	})
 
-	// Проверяем ссылки
+	// Проверка ссылок
 	results := h.checker.CheckLinks(r.Context(), req.Links)
 
-	// Удаляем из pending и добавляем результат
+	// Удаление из pending и добавление результата
 	h.storage.RemovePendingTask(id)
 	h.storage.AddLinkSet(id, results)
 
-	// Сохраняем состояние
+	// Сохранение состояния
 	if err := h.storage.Save(); err != nil {
 		log.Printf("Failed to save storage: %v", err)
 	}
