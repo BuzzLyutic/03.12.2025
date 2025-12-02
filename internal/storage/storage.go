@@ -30,7 +30,7 @@ type Storage struct {
 }
 
 func New(filePath string) (*Storage, error) {
-	// Создаём директорию если не существует
+	// Создание директории если не существует
 	dir := filepath.Dir(filePath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func New(filePath string) (*Storage, error) {
 		filePath: filePath,
 	}
 
-	// Загружаем существующие данные
+	// Загрузка существующих данных
 	if err := s.load(); err != nil && !os.IsNotExist(err) {
 		return nil, err
 	}

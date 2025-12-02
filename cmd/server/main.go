@@ -62,14 +62,14 @@ func main() {
 	<-quit
 	log.Println("Shutdown signal received...")
 
-	// Начинаем shutdown - новые задачи будут сохраняться как pending
+	// Новые задачи будут сохраняться как pending
 	h.StartShutdown()
 
-	// Создаём контекст с таймаутом для shutdown
+	// Создание контекста с таймаутом для shutdown
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.ShutdownTimeout)
 	defer cancel()
 
-	// Ожидаем завершения активных задач
+	// Ожидание завершения активных задач
 	log.Println("Waiting for active jobs to complete...")
 	done := make(chan struct{})
 	go func() {
@@ -84,12 +84,12 @@ func main() {
 		log.Println("Timeout waiting for active jobs")
 	}
 
-	// Сохраняем состояние
+	// Сохранение состояния
 	if err := store.Save(); err != nil {
 		log.Printf("Failed to save storage: %v", err)
 	}
 
-	// Останавливаем HTTP сервер
+	// Остановка HTTP сервера
 	if err := server.Shutdown(ctx); err != nil {
 		log.Printf("Server shutdown error: %v", err)
 	}

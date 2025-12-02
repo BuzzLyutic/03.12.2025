@@ -47,7 +47,7 @@ func (g *Generator) GenerateReport(linkSets []*model.LinkSet) ([]byte, error) {
 		pdf.Ln(5)
 	}
 
-	// Генерируем PDF в буфер
+	// Генерация PDF в буфер
 	var buf bytes.Buffer
 	if err := pdf.Output(&buf); err != nil {
 		return nil, fmt.Errorf("failed to generate PDF: %w", err)
